@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Bid } from '@/data/bids';
 import BidCard from './BidCard';
@@ -15,8 +14,8 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMinistry, setSelectedMinistry] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedMinistry, setSelectedMinistry] = useState('all_ministries');
+  const [selectedDepartment, setSelectedDepartment] = useState('all_departments');
   const [quantityRange, setQuantityRange] = useState<[number, number]>([0, 100000]);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -47,8 +46,8 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
   // Reset filters
   const handleResetFilters = () => {
     setSearchTerm('');
-    setSelectedMinistry('');
-    setSelectedDepartment('');
+    setSelectedMinistry('all_ministries');
+    setSelectedDepartment('all_departments');
     setQuantityRange([0, maxQuantity]);
     setCurrentPage(1);
     
@@ -70,10 +69,10 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
       );
 
       // Apply ministry filter
-      const ministryMatch = selectedMinistry === '' || bid.ministry === selectedMinistry;
+      const ministryMatch = selectedMinistry === 'all_ministries' || bid.ministry === selectedMinistry;
 
       // Apply department filter
-      const departmentMatch = selectedDepartment === '' || bid.department === selectedDepartment;
+      const departmentMatch = selectedDepartment === 'all_departments' || bid.department === selectedDepartment;
 
       // Apply quantity range
       const quantityMatch = bid.quantity >= quantityRange[0] && bid.quantity <= quantityRange[1];
@@ -82,6 +81,7 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
     });
   }, [bids, searchTerm, selectedMinistry, selectedDepartment, quantityRange]);
 
+  
   // Paginate the results
   const paginatedBids = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
