@@ -4,10 +4,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Filter, X, FileIcon, Upload } from 'lucide-react';
+import { Filter, X, BarChart, ArrowRightLeft } from 'lucide-react';
 import { Bid } from '@/data/bids';
 import { useToast } from '@/components/ui/use-toast';
 import { compareBids } from '@/utils/bidComparison';
+
+// Import the comparison bids
+import comparisonBidsData from '@/data/comparisonBids.json';
 
 interface FilterPanelProps {
   ministries: string[];
@@ -42,43 +45,27 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     hasChanges: boolean;
   } | null>(null);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const content = e.target?.result as string;
-        const newBids = JSON.parse(content) as Bid[];
-        
-        // Get current bids from the parent component
-        // For now, we'll import directly from the bids file since we don't have a state management system
-        import('@/data/bids').then(({ bids }) => {
-          const result = compareBids(bids, newBids);
-          setComparisonResult(result);
-          
-          if (!result.hasChanges) {
-            toast({
-              title: "No differences found",
-              description: "The uploaded bids are identical to the current bids.",
-            });
-          } else {
-            toast({
-              title: "Differences found",
-              description: `Added: ${result.addedBids.length}, Removed: ${result.removedBids.length}, Modified: ${result.modifiedBids.length}`,
-            });
-          }
-        });
-      } catch (error) {
+  const handleCompare = () => {
+    // Cast the imported JSON to the correct type
+    const comparisonBids = comparisonBidsData as unknown as Bid[];
+    
+    // Import directly from the bids file
+    import('@/data/bids').then(({ bids }) => {
+      const result = compareBids(bids, comparisonBids);
+      setComparisonResult(result);
+      
+      if (!result.hasChanges) {
         toast({
-          title: "Error parsing JSON",
-          description: "Please ensure the file contains valid JSON data.",
-          variant: "destructive",
+          title: "No differences found",
+          description: "The comparison bids are identical to the current bids.",
+        });
+      } else {
+        toast({
+          title: "Differences found",
+          description: `Added: ${result.addedBids.length}, Removed: ${result.removedBids.length}, Modified: ${result.modifiedBids.length}`,
         });
       }
-    };
-    reader.readAsText(file);
+    });
   };
 
   return (
@@ -149,27 +136,20 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
 
         <div className="border-t pt-4 mt-4">
           <h4 className="text-sm font-medium mb-2 flex items-center gap-1">
-            <FileIcon className="h-3.5 w-3.5" /> Compare Bids
+            <BarChart className="h-3.5 w-3.5" /> Data Comparison
           </h4>
           <p className="text-xs text-muted-foreground mb-2">
-            Upload a JSON file with bids to compare with current data
+            Compare current bids with predefined comparison data
           </p>
-          <div className="flex items-center gap-2">
-            <Label 
-              htmlFor="bid-file" 
-              className="cursor-pointer px-3 py-1.5 rounded-md border border-dashed flex items-center gap-1 hover:bg-gray-50 transition-colors text-sm"
-            >
-              <Upload className="h-3.5 w-3.5" />
-              Choose File
-            </Label>
-            <input 
-              type="file" 
-              id="bid-file" 
-              accept=".json" 
-              className="hidden" 
-              onChange={handleFileUpload}
-            />
-          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleCompare}
+            className="w-full flex items-center justify-center gap-1 mt-1"
+          >
+            <ArrowRightLeft className="h-3.5 w-3.5" />
+            Run Comparison
+          </Button>
 
           {comparisonResult && comparisonResult.hasChanges && (
             <div className="mt-3 text-xs">
