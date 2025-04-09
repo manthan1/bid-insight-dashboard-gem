@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Bid } from '@/data/bids';
 import BidCard from './BidCard';
 import SearchBar from './SearchBar';
 import FilterPanel from './FilterPanel';
 import Pagination from './Pagination';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface DashboardProps {
   bids: Bid[];
@@ -21,6 +21,11 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   const ITEMS_PER_PAGE = 10;
+
+  // Log the incoming bids to debug
+  useEffect(() => {
+    console.log('Bids received in Dashboard:', bids);
+  }, [bids]);
 
   // Extract unique ministries and departments for filters
   const ministries = useMemo(() => {
@@ -40,8 +45,14 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
   }, [bids]);
 
   const maxQuantity = useMemo(() => {
-    return Math.max(...bids.map(bid => bid.quantity));
+    const max = Math.max(...bids.map(bid => bid.quantity || 0));
+    console.log('Max quantity calculated:', max);
+    return max > 0 ? max : 100000;
   }, [bids]);
+
+  useEffect(() => {
+    setQuantityRange([0, maxQuantity]);
+  }, [maxQuantity]);
 
   // Reset filters
   const handleResetFilters = () => {
@@ -59,7 +70,7 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
 
   // Apply filters and search
   const filteredBids = useMemo(() => {
-    return bids.filter((bid) => {
+    const filtered = bids.filter((bid) => {
       // Apply search term
       const searchMatch = searchTerm === '' || (
         (bid.bid_number && bid.bid_number.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -75,17 +86,23 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
       const departmentMatch = selectedDepartment === 'all_departments' || bid.department === selectedDepartment;
 
       // Apply quantity range
-      const quantityMatch = bid.quantity >= quantityRange[0] && bid.quantity <= quantityRange[1];
+      const quantity = bid.quantity || 0;
+      const quantityMatch = quantity >= quantityRange[0] && quantity <= quantityRange[1];
 
       return searchMatch && ministryMatch && departmentMatch && quantityMatch;
     });
+    
+    console.log('Filtered bids count:', filtered.length);
+    return filtered;
   }, [bids, searchTerm, selectedMinistry, selectedDepartment, quantityRange]);
 
   
   // Paginate the results
   const paginatedBids = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredBids.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const paginated = filteredBids.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    console.log('Paginated bids:', paginated);
+    return paginated;
   }, [filteredBids, currentPage]);
 
   const totalPages = Math.ceil(filteredBids.length / ITEMS_PER_PAGE);
@@ -101,6 +118,17 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
     setSearchTerm(value);
     setCurrentPage(1);
   };
+
+  // If no bids, show a message
+  useEffect(() => {
+    if (bids.length === 0) {
+      toast({
+        title: "No bids available",
+        description: "There are no bids to display. Please check your data source.",
+        variant: "destructive"
+      });
+    }
+  }, [bids, toast]);
 
   return (
     <div className="container mx-auto px-4 py-8">

@@ -31,6 +31,15 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   onQuantityChange,
   onResetFilters
 }) => {
+  console.log('Filter Panel Props:', { 
+    ministries, 
+    departments, 
+    selectedMinistry, 
+    selectedDepartment, 
+    quantityRange, 
+    maxQuantity
+  });
+  
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border">
       <div className="flex justify-between items-center mb-4">

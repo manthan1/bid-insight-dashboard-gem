@@ -1,9 +1,25 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Dashboard from '@/components/Dashboard';
 import { bids } from '@/data/bids';
+import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
+  const { toast } = useToast();
+  const [bidData, setBidData] = useState(bids);
+
+  useEffect(() => {
+    console.log('Bids data loaded:', bids);
+    
+    if (!bids || bids.length === 0) {
+      toast({
+        title: "Data loading issue",
+        description: "No bid data was found. Please check the data source.",
+        variant: "destructive"
+      });
+    }
+  }, [toast]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
@@ -14,7 +30,7 @@ const Index = () => {
       </header>
       
       <main>
-        <Dashboard bids={bids} />
+        <Dashboard bids={bidData} />
       </main>
       
       <footer className="mt-12 py-6 border-t bg-white">
