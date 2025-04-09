@@ -7,11 +7,23 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  itemsPerPage: number;
+  totalItems: number;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination: React.FC<PaginationProps> = ({ 
+  currentPage, 
+  totalPages, 
+  onPageChange,
+  itemsPerPage,
+  totalItems
+}) => {
   // If there's only one page, don't render the pagination
   if (totalPages <= 1) return null;
+
+  // Calculate displayed item range
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   // Create an array of page numbers to display
   const getPageNumbers = () => {
@@ -58,44 +70,50 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
   };
 
   return (
-    <div className="flex items-center justify-center space-x-1">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="h-8 w-8"
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-      
-      {getPageNumbers().map((pageNum, index) => {
-        if (pageNum < 0) {
-          // Render ellipsis
-          return <span key={`ellipsis-${index}`} className="px-3">...</span>;
-        }
+    <div className="flex flex-col items-center space-y-2">
+      <div className="flex items-center justify-center space-x-1">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="h-8 w-8 text-gray-600"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
         
-        return (
-          <Button
-            key={pageNum}
-            variant={currentPage === pageNum ? "default" : "outline"}
-            onClick={() => onPageChange(pageNum)}
-            className="h-8 w-8 p-0"
-          >
-            {pageNum}
-          </Button>
-        );
-      })}
+        {getPageNumbers().map((pageNum, index) => {
+          if (pageNum < 0) {
+            // Render ellipsis
+            return <span key={`ellipsis-${index}`} className="px-3 text-gray-500">...</span>;
+          }
+          
+          return (
+            <Button
+              key={pageNum}
+              variant={currentPage === pageNum ? "default" : "outline"}
+              onClick={() => onPageChange(pageNum)}
+              className={`h-8 w-8 p-0 ${currentPage === pageNum ? 'bg-gray-800 text-white' : 'text-gray-700'}`}
+            >
+              {pageNum}
+            </Button>
+          );
+        })}
+        
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="h-8 w-8 text-gray-600"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
       
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="h-8 w-8"
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
+      <div className="text-sm text-gray-500">
+        Showing <span className="font-medium text-gray-700">{startItem}</span> to <span className="font-medium text-gray-700">{endItem}</span> of <span className="font-medium text-gray-700">{totalItems}</span> items
+      </div>
     </div>
   );
 };

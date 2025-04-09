@@ -22,9 +22,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="container mx-auto px-4 py-5">
-          <h1 className="text-2xl font-bold text-gray-900">Bid Insight Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Bid Insight Dashboard</h1>
           <p className="text-gray-500">Explore and analyze government procurement bids</p>
         </div>
       </header>

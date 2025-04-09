@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Bid } from '@/data/bids';
 import BidCard from './BidCard';
@@ -170,26 +171,30 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
             </div>
             <div className="w-full sm:w-1/3 flex justify-end">
               <Tabs defaultValue="grid" onValueChange={(value) => setViewMode(value as 'grid' | 'list')}>
-                <TabsList>
-                  <TabsTrigger value="grid">Grid</TabsTrigger>
-                  <TabsTrigger value="list">List</TabsTrigger>
+                <TabsList className="bg-gray-100">
+                  <TabsTrigger value="grid" className="data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+                    Grid
+                  </TabsTrigger>
+                  <TabsTrigger value="list" className="data-[state=active]:bg-gray-800 data-[state=active]:text-white">
+                    List
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
           </div>
 
           {/* Results count */}
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-gray-500">
             Showing {paginatedBids.length} of {filteredBids.length} bids
           </div>
 
           {/* No results message */}
           {filteredBids.length === 0 && (
             <div className="py-10 text-center">
-              <p className="text-lg text-muted-foreground">No bids found with the current filters.</p>
+              <p className="text-lg text-gray-500">No bids found with the current filters.</p>
               <button 
                 onClick={handleResetFilters}
-                className="mt-2 text-sm text-blue-500 hover:underline"
+                className="mt-2 text-sm text-gray-700 hover:underline"
               >
                 Clear all filters
               </button>
@@ -209,15 +214,15 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
           {viewMode === 'list' && filteredBids.length > 0 && (
             <div className="space-y-3">
               {paginatedBids.map((bid) => (
-                <div key={bid.bid_id} className="border rounded-lg p-3 hover:shadow-sm transition-shadow">
+                <div key={bid.bid_id} className="border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-shadow bg-white">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-medium">{bid.bid_number}</h3>
-                      <p className="text-sm text-muted-foreground truncate">{bid.category}</p>
+                      <h3 className="font-medium text-gray-800">{bid.bid_number}</h3>
+                      <p className="text-sm text-gray-500 truncate">{bid.category}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm">Quantity: <span className="font-medium">{bid.quantity}</span></p>
-                      <p className="text-xs text-muted-foreground">{bid.ministry || 'No Ministry'}</p>
+                      <p className="text-sm text-gray-600">Quantity: <span className="font-medium">{bid.quantity}</span></p>
+                      <p className="text-xs text-gray-500">{bid.ministry || 'No Ministry'}</p>
                     </div>
                   </div>
                 </div>
@@ -232,6 +237,8 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
+                itemsPerPage={ITEMS_PER_PAGE}
+                totalItems={filteredBids.length}
               />
             </div>
           )}
