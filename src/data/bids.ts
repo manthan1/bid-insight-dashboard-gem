@@ -113,3 +113,7 @@ export const bids: Bid[] = [
     department: "Department of Telecommunications"
   }
 ];
+
+// Example of how to import from the blank JSON file when needed:
+// import blankBids from './blank-bids.json';
+// export const customBids: Bid[] = blankBids as Bid[];
