@@ -102,7 +102,7 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
   const paginatedBids = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const paginated = filteredBids.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-    console.log('Paginated bids:', paginated);
+    console.log('Paginated bids for page', currentPage, ':', paginated);
     return paginated;
   }, [filteredBids, currentPage]);
 
@@ -110,6 +110,7 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
+    console.log('Page changed from', currentPage, 'to', newPage);
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -131,6 +132,11 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
     }
   }, [bids, toast]);
 
+  // Reset the page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedMinistry, selectedDepartment, quantityRange]);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row gap-6">
@@ -145,15 +151,12 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
             maxQuantity={maxQuantity}
             onMinistryChange={(value) => {
               setSelectedMinistry(value);
-              setCurrentPage(1);
             }}
             onDepartmentChange={(value) => {
               setSelectedDepartment(value);
-              setCurrentPage(1);
             }}
             onQuantityChange={(value) => {
               setQuantityRange(value);
-              setCurrentPage(1);
             }}
             onResetFilters={handleResetFilters}
           />

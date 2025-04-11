@@ -69,13 +69,21 @@ const Pagination: React.FC<PaginationProps> = ({
     return pages;
   };
 
+  const handlePageClick = (pageNum: number) => {
+    // Only trigger if it's a different page
+    if (pageNum !== currentPage) {
+      console.log('Changing to page:', pageNum);
+      onPageChange(pageNum);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center space-y-2">
       <div className="flex items-center justify-center space-x-1">
         <Button
           variant="outline"
           size="icon"
-          onClick={() => onPageChange(currentPage - 1)}
+          onClick={() => handlePageClick(currentPage - 1)}
           disabled={currentPage === 1}
           className="h-8 w-8 text-gray-600"
         >
@@ -92,7 +100,7 @@ const Pagination: React.FC<PaginationProps> = ({
             <Button
               key={pageNum}
               variant={currentPage === pageNum ? "default" : "outline"}
-              onClick={() => onPageChange(pageNum)}
+              onClick={() => handlePageClick(pageNum)}
               className={`h-8 w-8 p-0 ${currentPage === pageNum ? 'bg-gray-800 text-white' : 'text-gray-700'}`}
             >
               {pageNum}
@@ -103,7 +111,7 @@ const Pagination: React.FC<PaginationProps> = ({
         <Button
           variant="outline"
           size="icon"
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={() => handlePageClick(currentPage + 1)}
           disabled={currentPage === totalPages}
           className="h-8 w-8 text-gray-600"
         >
