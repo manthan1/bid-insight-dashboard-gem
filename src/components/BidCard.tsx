@@ -56,17 +56,7 @@ const BidCard: React.FC<BidCardProps> = ({ bid }) => {
           <p className="text-xs font-medium">{bid.ministry || 'No Ministry'}</p>
           <p className="text-xs text-muted-foreground truncate">{bid.department || 'No Department'}</p>
         </div>
-        {/* Commented out bid_url and download_url */}
-        {/* {bid.download_url && (
-          <a 
-            href={bid.download_url} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="text-xs text-blue-500 hover:underline mt-2"
-          >
-            Download Bid Document
-          </a>
-        )} */}
+        {/* URLs are intentionally not displayed as per user request */}
       </CardFooter>
     </Card>
   );

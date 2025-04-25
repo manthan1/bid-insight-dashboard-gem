@@ -1,15 +1,14 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
-import { Bid } from '@/data/bids';
 import BidCard from './BidCard';
 import SearchBar from './SearchBar';
 import FilterPanel from './FilterPanel';
 import Pagination from './Pagination';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { ExtendedBid } from '@/types/extendedBid';
 
 interface DashboardProps {
-  bids: Bid[];
+  bids: ExtendedBid[];
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
