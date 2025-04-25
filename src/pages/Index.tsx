@@ -3,22 +3,24 @@ import React, { useEffect, useState } from 'react';
 import Dashboard from '@/components/Dashboard';
 import { bids } from '@/data/bids';
 import { useToast } from '@/hooks/use-toast';
+import { ExtendedBid, mapToExtendedBids } from '@/types/extendedBid';
 
 const Index = () => {
   const { toast } = useToast();
-  const [bidData, setBidData] = useState(bids);
+  // Convert the imported bids to ExtendedBid type
+  const [bidData, setBidData] = useState<ExtendedBid[]>(mapToExtendedBids(bids));
 
   useEffect(() => {
-    console.log('Bids data loaded:', bids);
+    console.log('Bids data loaded:', bidData);
     
-    if (!bids || bids.length === 0) {
+    if (!bidData || bidData.length === 0) {
       toast({
         title: "Data loading issue",
         description: "No bid data was found. Please check the data source.",
         variant: "destructive"
       });
     }
-  }, [toast]);
+  }, [toast, bidData]);
 
   return (
     <div className="min-h-screen bg-gray-50">
