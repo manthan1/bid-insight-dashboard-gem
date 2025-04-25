@@ -1,5 +1,5 @@
 
-import { Bid } from "@/data/bids";
+import { ExtendedBid } from "@/types/extendedBid";
 
 /**
  * Compare two arrays of bids and return the differences
@@ -7,10 +7,10 @@ import { Bid } from "@/data/bids";
  * @param newBids The new array of bids to compare
  * @returns Object containing added, removed and modified bids
  */
-export function compareBids(originalBids: Bid[], newBids: Bid[]) {
-  const addedBids: Bid[] = [];
-  const removedBids: Bid[] = [];
-  const modifiedBids: { original: Bid; modified: Bid }[] = [];
+export function compareBids(originalBids: ExtendedBid[], newBids: ExtendedBid[]) {
+  const addedBids: ExtendedBid[] = [];
+  const removedBids: ExtendedBid[] = [];
+  const modifiedBids: { original: ExtendedBid; modified: ExtendedBid }[] = [];
 
   // Find added and modified bids
   newBids.forEach(newBid => {
@@ -43,7 +43,7 @@ export function compareBids(originalBids: Bid[], newBids: Bid[]) {
 /**
  * Check if two bids are equal by comparing their properties
  */
-function areBidsEqual(bid1: Bid, bid2: Bid): boolean {
+function areBidsEqual(bid1: ExtendedBid, bid2: ExtendedBid): boolean {
   return (
     bid1.bid_id === bid2.bid_id &&
     bid1.bid_number === bid2.bid_number &&

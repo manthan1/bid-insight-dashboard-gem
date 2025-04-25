@@ -3,10 +3,10 @@ import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Package } from 'lucide-react';
-import { Bid } from '@/data/bids';
+import { ExtendedBid } from '@/types/extendedBid';
 
 interface BidCardProps {
-  bid: Bid;
+  bid: ExtendedBid;
 }
 
 const BidCard: React.FC<BidCardProps> = ({ bid }) => {
