@@ -61,10 +61,12 @@ const BidCard: React.FC<BidCardProps> = ({ bid }) => {
             href={bid.download_url} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="flex items-center gap-1 text-xs text-primary hover:underline mt-2"
+            className="mt-2 w-full"
           >
-            <Download className="h-3 w-3" />
-            Download Bid Document
+            <div className="flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2 rounded-md text-xs font-semibold hover:bg-primary/90 transition-colors">
+              <Download className="h-4 w-4" />
+              Download Bid Document
+            </div>
           </a>
         )}
       </CardFooter>
