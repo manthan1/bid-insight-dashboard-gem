@@ -52,6 +52,8 @@ function areBidsEqual(bid1: Bid, bid2: Bid): boolean {
     bid1.start_date === bid2.start_date &&
     bid1.end_date === bid2.end_date &&
     bid1.ministry === bid2.ministry &&
-    bid1.department === bid2.department
+    bid1.department === bid2.department &&
+    bid1.bid_url === bid2.bid_url &&
+    bid1.download_url === bid2.download_url
   );
 }

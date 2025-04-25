@@ -73,4 +73,3 @@ const BidCard: React.FC<BidCardProps> = ({ bid }) => {
 };
 
 export default BidCard;
-
