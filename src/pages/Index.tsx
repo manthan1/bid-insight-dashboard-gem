@@ -5,17 +5,85 @@ import { bids } from '@/data/bids';
 import { useToast } from '@/hooks/use-toast';
 import { ExtendedBid, mapToExtendedBids } from '@/types/extendedBid';
 import { StateBid, mapToStateBids } from '@/types/stateBid';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Index = () => {
   const { toast } = useToast();
   const [bidData, setBidData] = useState<ExtendedBid[]>(mapToExtendedBids(bids));
   const [activeTab, setActiveTab] = useState<'gem' | 'state'>('gem');
 
-  // This would be your new state data
+  // State bids data
   const stateBids: StateBid[] = [
-    // ... your new state bids data would go here
+    {
+      "serial_no": "1.",
+      "start_date": "26-Apr-2025 06:55 PM",
+      "end_date": "03-May-2025 02:00 PM",
+      "open_date": "03-May-2025 02:00 PM",
+      "title": "Internal Clearance of Indri Drain from RD 70000 to 112000 before flood Season 2025.",
+      "link": "https://eprocure.gov.in/cppp/tendersfullviewmmp/MjAzMzMwMTg5A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1MTc0NTY3NzgxOQ==A13h1MjAyNUMwMDYzNjk3IEMwMUIgNEY2OSA5Q0U1IEMyMjQ5OTJBRkNGMTExOUlSUg==A13h1MjAyNV9IUllfNDQzMDIyXzE=",
+      "location": "Haryana",
+      "department": "--"
+    },
+    {
+      "serial_no": "2.",
+      "start_date": "26-Apr-2025 06:55 PM",
+      "end_date": "02-May-2025 02:00 PM",
+      "open_date": "02-May-2025 04:00 PM",
+      "title": "LINE 01 WORD NO. 07 MAI BED BEST PROCESSING PLANT KE NIKAT TALAB KA SONIYEKARAY OR TALAB KE CHARO TARAF STRIT LIGHT DWARA SONIYEKARAY KA KARYE",
+      "link": "https://eprocure.gov.in/cppp/tendersfullviewmmp/MjAzMzMwNDgyA13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1MTc0NTY3NzgxOQ==A13h1MjIwL05QUFQvRVRFTkRFUi1TVUNITkEvMjUtMjYgRFQgMTYuMDQuMjAyNQ==A13h1MjAyNV9ET0xCVV8xMDMzMTg5XzE=",
+      "location": "Uttar Pradesh",
+      "department": "--"
+    },
+    {
+      "serial_no": "3.",
+      "start_date": "26-Apr-2025 06:55 PM",
+      "end_date": "02-May-2025 12:00 PM",
+      "open_date": "02-May-2025 12:30 PM",
+      "title": "Maintenance and Operation of Street Light and High Mast on Delhi PWD Road under PWD DHC , ND/Central, New Delhi",
+      "link": "https://eprocure.gov.in/cppp/tendersfullviewmmp/MjAzMzMwNDY2A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1MTc0NTY3NzgxOQ==A13h1MjIvRUVFL1BXRERIQyxOREMyMDI1LTI2A13h1MjAyNV9QV0RfMjcxMzQwXzE=",
+      "location": "NCT of Delhi",
+      "department": "--"
+    },
+    {
+      "serial_no": "4.",
+      "start_date": "26-Apr-2025 06:55 PM",
+      "end_date": "02-May-2025 03:00 PM",
+      "open_date": "02-May-2025 03:30 PM",
+      "title": "RATE CONTRACT OF DIFFERENT VEHICLE OR MACHINERY FOR SOLID WASTE MANAGEMENT AND NALA SAFAI WORK.",
+      "link": "https://eprocure.gov.in/cppp/tendersfullviewmmp/MjAzMzMwNDczA13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1MTc0NTY3NzgxOQ==A13h1VkVISUNMRVJFTlQvMjUtMjY=A13h1MjAyNV9OTktBTl8xMDMzMTk2XzE=",
+      "location": "Uttar Pradesh",
+      "department": "--"
+    },
+    {
+      "serial_no": "5.",
+      "start_date": "26-Apr-2025 06:55 PM",
+      "end_date": "01-May-2025 10:00 AM",
+      "open_date": "01-May-2025 03:00 PM",
+      "title": "Sarvajanik interlocking kharanja may nali nirman karya mukhya sadak se prayag singh ke ghar tak dhauwa",
+      "link": "https://eprocure.gov.in/cppp/tendersfullviewmmp/MjAzMzMwNDQ5A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1MTc0NTY3NzgxOQ==A13h1MDMvMjAyNS0yNi8xNC8yNC0wNC0yMDI1A13h1MjAyNV9QUkRfNDYyODAxXzE=",
+      "location": "Rajasthan",
+      "department": "--"
+    },
+    {
+      "serial_no": "6.",
+      "start_date": "26-Apr-2025 06:55 PM",
+      "end_date": "02-May-2025 02:00 PM",
+      "open_date": "02-May-2025 04:00 PM",
+      "title": "LINE 02 WORD NO. 03 MAI DR. JUNAID KE MAKAN SE ZULFIKAR KE  MAKAN TAK C0C0 SADAK OR NALI NIRMAN KARYE.910000",
+      "link": "https://eprocure.gov.in/cppp/tendersfullviewmmp/MjAzMzMwNDgzA13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1MTc0NTY3NzgxOQ==A13h1MjIwL05QUFQvRVRFTkRFUi1TVUNITkEvMjUtMjYgRFQgMTYuMDQuMjAyNQ==A13h1MjAyNV9ET0xCVV8xMDMzMTg5XzI=",
+      "location": "Uttar Pradesh",
+      "department": "--"
+    },
+    {
+      "serial_no": "7.",
+      "start_date": "26-Apr-2025 06:55 PM",
+      "end_date": "01-May-2025 10:00 AM",
+      "open_date": "01-May-2025 03:00 PM",
+      "title": "Sarvajanik interlocking kharanja may nali nirman karya mukhya sadak se ganv ki galiyo me",
+      "link": "https://eprocure.gov.in/cppp/tendersfullviewmmp/MjAzMzMwNDM3A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1VmpGYWExTXlTWGxTYkdoUFZqSm9jbHBJYjNkUFVUMDk=A13h1MTc0NTY3NzgxOQ==A13h1MDIvMjAyNS0yNi8xMS8yNC0wNC0yMDI1A13h1MjAyNV9QUkRfNDYyNzkwXzE=",
+      "location": "Rajasthan",
+      "department": "--"
+    }
   ];
 
   useEffect(() => {
@@ -31,6 +99,20 @@ const Index = () => {
   const handleTabChange = (value: string) => {
     setActiveTab(value as 'gem' | 'state');
   };
+
+  // Map state bids to the ExtendedBid format, providing all required fields
+  const mappedStateBids: ExtendedBid[] = stateBids.map(bid => ({
+    bid_id: bid.serial_no,
+    bid_number: bid.serial_no,
+    category: bid.title,
+    start_date: bid.start_date,
+    end_date: bid.end_date,
+    ministry: bid.department,
+    department: bid.location,
+    quantity: 0,
+    download_url: bid.link,
+    bid_url: '' // Adding empty bid_url to satisfy the type requirement
+  }));
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,17 +134,7 @@ const Index = () => {
         {activeTab === 'gem' ? (
           <Dashboard bids={bidData} />
         ) : (
-          <Dashboard bids={stateBids.map(bid => ({
-            bid_id: bid.serial_no,
-            bid_number: bid.serial_no,
-            category: bid.title,
-            start_date: bid.start_date,
-            end_date: bid.end_date,
-            ministry: bid.department,
-            department: bid.location,
-            quantity: 0,
-            download_url: bid.link
-          }))} />
+          <Dashboard bids={mappedStateBids} />
         )}
       </main>
       

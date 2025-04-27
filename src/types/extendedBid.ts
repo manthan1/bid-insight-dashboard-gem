@@ -3,7 +3,7 @@ import { Bid as OriginalBid } from "@/data/bids";
 
 // Extend the original Bid type with additional properties
 export interface ExtendedBid extends OriginalBid {
-  bid_url: string;
+  bid_url?: string;  // Make bid_url optional
   download_url: string;
 }
 
