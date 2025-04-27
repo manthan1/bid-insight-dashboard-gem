@@ -1,9 +1,11 @@
 
 import { Bid as OriginalBid } from "@/data/bids";
 
-// Extend the original Bid type with additional properties
-export interface ExtendedBid extends OriginalBid {
-  bid_url?: string;  // Make bid_url optional
+// Define a modified Bid type that makes bid_url optional
+type ModifiedBid = Omit<OriginalBid, 'bid_url'> & { bid_url?: string };
+
+// Extend the modified Bid type with additional properties
+export interface ExtendedBid extends ModifiedBid {
   download_url: string;
 }
 
@@ -11,7 +13,7 @@ export interface ExtendedBid extends OriginalBid {
 export function asBid(bid: ExtendedBid): OriginalBid {
   // Create a new object with only the properties that exist in OriginalBid
   const { bid_url, download_url, ...originalBidProps } = bid;
-  return originalBidProps as OriginalBid;
+  return { ...originalBidProps, bid_url: bid_url || '' } as OriginalBid;
 }
 
 // Converter utility for the entire array

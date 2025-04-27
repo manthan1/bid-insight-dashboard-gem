@@ -17,6 +17,7 @@ interface FilterPanelProps {
   onDepartmentChange: (value: string) => void;
   onQuantityChange: (value: [number, number]) => void;
   onResetFilters: () => void;
+  showQuantityFilter?: boolean; // Added this prop
 }
 
 const FilterPanel: React.FC<FilterPanelProps> = ({
@@ -29,7 +30,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   onMinistryChange,
   onDepartmentChange,
   onQuantityChange,
-  onResetFilters
+  onResetFilters,
+  showQuantityFilter = true // Default to true
 }) => {
   console.log('Filter Panel Props:', { 
     ministries, 
@@ -37,7 +39,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
     selectedMinistry, 
     selectedDepartment, 
     quantityRange, 
-    maxQuantity
+    maxQuantity,
+    showQuantityFilter
   });
   
   return (
@@ -87,24 +90,26 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           </Select>
         </div>
 
-        <div>
-          <div className="flex justify-between items-center mb-1">
-            <Label htmlFor="quantity-filter" className="text-sm">Quantity Range</Label>
-            <span className="text-xs text-muted-foreground">
-              {quantityRange[0]} - {quantityRange[1]}
-            </span>
+        {showQuantityFilter && (
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <Label htmlFor="quantity-filter" className="text-sm">Quantity Range</Label>
+              <span className="text-xs text-muted-foreground">
+                {quantityRange[0]} - {quantityRange[1]}
+              </span>
+            </div>
+            <Slider 
+              id="quantity-filter"
+              defaultValue={[0, maxQuantity]}
+              min={0}
+              max={maxQuantity}
+              step={1}
+              value={[quantityRange[0], quantityRange[1]]}
+              onValueChange={(value) => onQuantityChange(value as [number, number])}
+              className="my-5"
+            />
           </div>
-          <Slider 
-            id="quantity-filter"
-            defaultValue={[0, maxQuantity]}
-            min={0}
-            max={maxQuantity}
-            step={1}
-            value={[quantityRange[0], quantityRange[1]]}
-            onValueChange={(value) => onQuantityChange(value as [number, number])}
-            className="my-5"
-          />
-        </div>
+        )}
       </div>
     </div>
   );
