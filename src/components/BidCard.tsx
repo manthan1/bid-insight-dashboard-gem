@@ -11,7 +11,11 @@ interface BidCardProps {
 
 const BidCard: React.FC<BidCardProps> = ({ bid }) => {
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    // Handle both ISO and custom date formats
+    const date = dateString.includes('T') 
+      ? new Date(dateString)
+      : new Date(dateString.replace(/(\d{2})-(\w{3})-(\d{4})/, '$2 $1 $3'));
+    
     return date.toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'short', 
@@ -32,9 +36,11 @@ const BidCard: React.FC<BidCardProps> = ({ bid }) => {
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold">{bid.bid_number}</CardTitle>
-          <Badge variant={bid.quantity > 100 ? "destructive" : "outline"}>
-            {bid.quantity} {bid.quantity > 1 ? "units" : "unit"}
-          </Badge>
+          {bid.quantity > 0 && (
+            <Badge variant={bid.quantity > 100 ? "destructive" : "outline"}>
+              {bid.quantity} {bid.quantity > 1 ? "units" : "unit"}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent className="pb-2">
