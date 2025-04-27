@@ -1,10 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import Dashboard from '@/components/Dashboard';
 import { bids } from '@/data/bids';
 import { useToast } from '@/hooks/use-toast';
 import { ExtendedBid, mapToExtendedBids } from '@/types/extendedBid';
-import { StateBid, mapToStateBids } from '@/types/stateBid';
+import { StateBid } from '@/types/stateBid';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Index = () => {
@@ -100,20 +99,6 @@ const Index = () => {
     setActiveTab(value as 'gem' | 'state');
   };
 
-  // Map state bids to the ExtendedBid format, providing all required fields
-  const mappedStateBids: ExtendedBid[] = stateBids.map(bid => ({
-    bid_id: bid.serial_no,
-    bid_number: bid.serial_no,
-    category: bid.title,
-    start_date: bid.start_date,
-    end_date: bid.end_date,
-    ministry: bid.department,
-    department: bid.location,
-    quantity: 0,
-    download_url: bid.link,
-    bid_url: '' // Adding empty bid_url to satisfy the type requirement
-  }));
-
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b border-gray-200">
@@ -132,9 +117,9 @@ const Index = () => {
       
       <main>
         {activeTab === 'gem' ? (
-          <Dashboard bids={bidData} />
+          <Dashboard bids={bidData} type="gem" />
         ) : (
-          <Dashboard bids={mappedStateBids} />
+          <Dashboard bids={stateBids} type="state" />
         )}
       </main>
       

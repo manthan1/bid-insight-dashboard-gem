@@ -6,12 +6,14 @@ import Pagination from './Pagination';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { ExtendedBid } from '@/types/extendedBid';
+import { StateBid } from '@/types/stateBid';
 
 interface DashboardProps {
-  bids: ExtendedBid[];
+  bids: ExtendedBid[] | StateBid[];
+  type: 'gem' | 'state';
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
+const Dashboard: React.FC<DashboardProps> = ({ bids, type }) => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMinistry, setSelectedMinistry] = useState('all_ministries');
@@ -30,29 +32,42 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
   // Extract unique ministries and departments for filters
   const ministries = useMemo(() => {
     const uniqueMinistries = new Set<string>();
-    bids.forEach(bid => {
-      if (bid.ministry) uniqueMinistries.add(bid.ministry);
-    });
+    if (type === 'gem') {
+      (bids as ExtendedBid[]).forEach(bid => {
+        if (bid.ministry) uniqueMinistries.add(bid.ministry);
+      });
+    }
     return Array.from(uniqueMinistries).sort();
-  }, [bids]);
+  }, [bids, type]);
 
   const departments = useMemo(() => {
     const uniqueDepartments = new Set<string>();
-    bids.forEach(bid => {
-      if (bid.department) uniqueDepartments.add(bid.department);
-    });
+    if (type === 'gem') {
+      (bids as ExtendedBid[]).forEach(bid => {
+        if (bid.department) uniqueDepartments.add(bid.department);
+      });
+    } else {
+      (bids as StateBid[]).forEach(bid => {
+        if (bid.location) uniqueDepartments.add(bid.location);
+      });
+    }
     return Array.from(uniqueDepartments).sort();
-  }, [bids]);
+  }, [bids, type]);
 
   const maxQuantity = useMemo(() => {
-    const max = Math.max(...bids.map(bid => bid.quantity || 0));
-    console.log('Max quantity calculated:', max);
-    return max > 0 ? max : 100000;
-  }, [bids]);
+    if (type === 'gem') {
+      const max = Math.max(...(bids as ExtendedBid[]).map(bid => bid.quantity || 0));
+      console.log('Max quantity calculated:', max);
+      return max > 0 ? max : 100000;
+    }
+    return 100000;
+  }, [bids, type]);
 
   useEffect(() => {
-    setQuantityRange([0, maxQuantity]);
-  }, [maxQuantity]);
+    if (type === 'gem') {
+      setQuantityRange([0, maxQuantity]);
+    }
+  }, [maxQuantity, type]);
 
   // Reset filters
   const handleResetFilters = () => {
@@ -68,33 +83,34 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
     });
   };
 
-  // Apply filters and search
+  // Apply filters and search based on bid type
   const filteredBids = useMemo(() => {
-    const filtered = bids.filter((bid) => {
-      // Apply search term
+    return bids.filter((bid) => {
+      // Apply search term based on bid type
       const searchMatch = searchTerm === '' || (
-        (bid.bid_number && bid.bid_number.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (bid.category && bid.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (bid.ministry && bid.ministry.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (bid.department && bid.department.toLowerCase().includes(searchTerm.toLowerCase()))
+        type === 'gem' 
+          ? ((bid as ExtendedBid).bid_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             (bid as ExtendedBid).category?.toLowerCase().includes(searchTerm.toLowerCase()))
+          : ((bid as StateBid).serial_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             (bid as StateBid).title?.toLowerCase().includes(searchTerm.toLowerCase()))
       );
 
-      // Apply ministry filter
-      const ministryMatch = selectedMinistry === 'all_ministries' || bid.ministry === selectedMinistry;
+      // Apply filters based on bid type
+      const ministryMatch = type === 'gem' 
+        ? selectedMinistry === 'all_ministries' || (bid as ExtendedBid).ministry === selectedMinistry
+        : selectedMinistry === 'all_ministries' || (bid as StateBid).department === selectedMinistry;
 
-      // Apply department filter
-      const departmentMatch = selectedDepartment === 'all_departments' || bid.department === selectedDepartment;
+      const departmentMatch = type === 'gem'
+        ? selectedDepartment === 'all_departments' || (bid as ExtendedBid).department === selectedDepartment
+        : selectedDepartment === 'all_departments' || (bid as StateBid).location === selectedDepartment;
 
-      // Apply quantity range
-      const quantity = bid.quantity || 0;
-      const quantityMatch = quantity >= quantityRange[0] && quantity <= quantityRange[1];
+      const quantityMatch = type === 'gem'
+        ? ((bid as ExtendedBid).quantity || 0) >= quantityRange[0] && ((bid as ExtendedBid).quantity || 0) <= quantityRange[1]
+        : true; // State bids don't have quantity
 
       return searchMatch && ministryMatch && departmentMatch && quantityMatch;
     });
-    
-    console.log('Filtered bids count:', filtered.length);
-    return filtered;
-  }, [bids, searchTerm, selectedMinistry, selectedDepartment, quantityRange]);
+  }, [bids, searchTerm, selectedMinistry, selectedDepartment, quantityRange, type]);
 
   
   // Paginate the results
@@ -139,25 +155,20 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row gap-6">
-        {/* Sidebar with filters */}
+        {/* Filters panel - show quantity filter only for GEM bids */}
         <div className="w-full md:w-1/4">
           <FilterPanel
-            ministries={ministries}
+            ministries={type === 'gem' ? ministries : []}
             departments={departments}
             selectedMinistry={selectedMinistry}
             selectedDepartment={selectedDepartment}
-            quantityRange={quantityRange}
+            quantityRange={type === 'gem' ? quantityRange : [0, 0]}
             maxQuantity={maxQuantity}
-            onMinistryChange={(value) => {
-              setSelectedMinistry(value);
-            }}
-            onDepartmentChange={(value) => {
-              setSelectedDepartment(value);
-            }}
-            onQuantityChange={(value) => {
-              setQuantityRange(value);
-            }}
+            onMinistryChange={setSelectedMinistry}
+            onDepartmentChange={setSelectedDepartment}
+            onQuantityChange={setQuantityRange}
             onResetFilters={handleResetFilters}
+            showQuantityFilter={type === 'gem'}
           />
         </div>
 
@@ -203,11 +214,15 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
             </div>
           )}
 
-          {/* Grid view */}
+          {/* Grid/List views with BidCard components */}
           {viewMode === 'grid' && filteredBids.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {paginatedBids.map((bid) => (
-                <BidCard key={bid.bid_id} bid={bid} />
+                <BidCard 
+                  key={type === 'gem' ? (bid as ExtendedBid).bid_id : (bid as StateBid).serial_no} 
+                  bid={bid} 
+                  type={type} 
+                />
               ))}
             </div>
           )}
@@ -216,15 +231,33 @@ const Dashboard: React.FC<DashboardProps> = ({ bids }) => {
           {viewMode === 'list' && filteredBids.length > 0 && (
             <div className="space-y-3">
               {paginatedBids.map((bid) => (
-                <div key={bid.bid_id} className="border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-shadow bg-white">
+                <div key={type === 'gem' ? (bid as ExtendedBid).bid_id : (bid as StateBid).serial_no} className="border border-gray-200 rounded-lg p-3 hover:shadow-sm transition-shadow bg-white">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-medium text-gray-800">{bid.bid_number}</h3>
-                      <p className="text-sm text-gray-500 truncate">{bid.category}</p>
+                      {type === 'gem' ? (
+                        <>
+                          <h3 className="font-medium text-gray-800">{(bid as ExtendedBid).bid_number}</h3>
+                          <p className="text-sm text-gray-500 truncate">{(bid as ExtendedBid).category}</p>
+                        </>
+                      ) : (
+                        <>
+                          <h3 className="font-medium text-gray-800">{(bid as StateBid).serial_no}</h3>
+                          <p className="text-sm text-gray-500 truncate">{(bid as StateBid).title}</p>
+                        </>
+                      )}
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-600">Quantity: <span className="font-medium">{bid.quantity}</span></p>
-                      <p className="text-xs text-gray-500">{bid.ministry || 'No Ministry'}</p>
+                      {type === 'gem' ? (
+                        <>
+                          <p className="text-sm text-gray-600">Quantity: <span className="font-medium">{(bid as ExtendedBid).quantity}</span></p>
+                          <p className="text-xs text-gray-500">{(bid as ExtendedBid).ministry || 'No Ministry'}</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-xs text-gray-500">{(bid as StateBid).department || 'No Department'}</p>
+                          <p className="text-xs text-gray-500">Location: {(bid as StateBid).location}</p>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
